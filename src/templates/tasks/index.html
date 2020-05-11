@@ -1,0 +1,28 @@
+{% extends 'layouts/tasks/main.html' %}
+
+{% block table %}
+<a href="/control/tasks/create/" type="button" class="btn btn-primary btn-create">Create</a>
+<table id="example" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>name</th>
+        </tr>
+    </thead>
+</table>
+
+<script>
+   $(document).ready( function () {
+    $('#example').DataTable({
+        "ajax": {
+            "url": '/tasks/ajax/tasks/',
+            "type": "POST",
+            "headers": {"X-CSRFToken": '{{csrf_token}}'},
+        },
+        "columns": [
+            { "data": "name" },
+        ]
+    });
+} );
+</script>
+</script>
+{% endblock %}

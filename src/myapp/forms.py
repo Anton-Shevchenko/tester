@@ -1,17 +1,16 @@
 from django import forms
-from .models import ItemBatch
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import User
 
 
-class SomeForm(forms.ModelForm):
+class CustomUserCreationForm(UserCreationForm):
+    class Meta(UserCreationForm):
+        model = User
+        fields = ('email', 'first_name', 'group_id')
+
+
+class CustomUserChangeForm(UserChangeForm):
+
     class Meta:
-        model = ItemBatch
-        fields = '__all__'
-
-    def save(self, commit=True):
-        image = self.cleaned_data.pop('image')
-        instance = super().save(commit=True)
-        # instance.save_m2m()
-        print(image)
-        instance.image = image
-        instance.save()
-        return instance
+        model = User
+        fields = ('email', 'first_name', 'group_id')

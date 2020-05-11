@@ -1,0 +1,27 @@
+{% extends 'administrator/layouts/main.html' %}
+
+{% block form %}
+<a href="/administrator/users/create" type="button" class="btn btn-primary">Create</a>
+<table id="example" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>Id</th>
+        </tr>
+    </thead>
+</table>
+
+<script>
+   $(document).ready( function () {
+    $('#example').DataTable({
+        "ajax": {
+            "url": '/administrator/ajax/users/',
+            "type": "GET",
+            "headers": {"X-CSRFToken": '{{csrf_token}}'},
+        },
+        "columns": [
+            { "data": "email" },
+        ]
+    });
+} );
+</script>
+{% endblock %}

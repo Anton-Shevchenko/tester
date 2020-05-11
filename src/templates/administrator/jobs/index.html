@@ -1,0 +1,40 @@
+{% extends 'administrator/layouts/main.html' %}
+
+{% block form %}
+{#<a href="/administrator/jobs/create" type="button" class="btn btn-primary btn-create">Create</a>#}
+<table id="example" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+</table>
+
+<script>
+   $(document).ready( function () {
+    $('#example').DataTable({
+        "ajax": {
+            "url": '/administrator/jobs/',
+            "type": "POST",
+            "headers": {"X-CSRFToken": '{{csrf_token}}'},
+        },
+        "columns": [
+            { "data": "id" },
+            /* EDIT */ {
+                mRender: function (data, type, row) {
+                    console.log(data);
+                    console.log(1);
+                    console.log(type);
+                    console.log(2);
+                    console.log(row.id);
+                    return '<a class="table-btn btn-action"  href="/administrator/jobs/'
+                        + row.id +'/update/">Job</a>' +
+                           '<a class="table-btn btn-edit" href="/administrator/jobs/' + row.id +'/delete/">Delete</a>'
+                }
+            }
+        ]
+    });
+} );
+</script>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'layouts/main/main.html' %}
+
+{% load static %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/administrator.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-2 col-centered">
+            <ul class="admin-nav">
+                <a href="/administrator/jobs/">
+                    <li>
+                        Jobs
+                    </li>
+                </a>
+                <a href="/administrator/users/">
+                    <li>
+                        Users
+                    </li>
+                </a>
+                <a href="/administrator/tasks/">
+                    <li>Tasks</li>
+                </a>
+                 <a href="/administrator/blog/posts/">
+                    <li>Blog</li>
+                </a>
+            </ul>
+        </div>
+        <div class="col-10">
+            {% block form %}
+
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,17 +1,22 @@
-from django.views.generic import TemplateView
-from .tasks import show_hello_world
-from .models import DemoModel
-# Create your views here.
+from django.contrib.auth import logout, login, authenticate
+from django.http import JsonResponse, HttpResponseNotFound
+from django.shortcuts import redirect
+from myapp.models import User
 
 
-class ShowHelloWorld(TemplateView):
-    template_name = 'hello_world.html'
+def users_logout(request):
+    logout(request)
 
-    def get(self, *args, **kwargs):
-        show_hello_world.apply()
-        return super().get(*args, **kwargs)
+    return redirect('/')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['demo_content'] = DemoModel.objects.all()
-        return context
+
+def users_login(request):
+
+    user = authenticate(username=request.POST.get('email'), password=request.POST.get('password'))
+    print('lllll', user)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+
+        return JsonResponse({"data": 'ok'})
+    return HttpResponseNotFound('User not found')

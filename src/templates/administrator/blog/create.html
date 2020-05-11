@@ -1,0 +1,31 @@
+{% extends 'administrator/layouts/main.html' %}
+
+{% block form %}
+<h1>New Post</h1>
+<form id="create-post" method="POST" class="post-form">{% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="save btn btn-default">Save</button>
+</form>
+<div id="info">
+
+</div>
+
+<script type="text/javascript">
+    let frm = $('#create-post');
+    frm.submit(function () {
+        $.ajax({
+            type: "POST",
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                console.log(data);
+                // $("#info").html(data);
+            },
+            error: function(data) {
+                $("#info").html("Something went wrong!");
+            }
+        });
+        return false;
+    });
+</script>
+{% endblock %}
