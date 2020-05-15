@@ -2,10 +2,12 @@
 
 {% block content %}
 {% for post in posts %}
-    <div>
-        <p>published: {{ post.published_date }}</p>
-        <h1><a href="">{{ post.title }}</a></h1>
-        <p>{{ post.text|linebreaksbr }}</p>
+    <div style="width: 100%;" align="center">
+        <div style="width: 60%; margin-top: 50px" align="left">
+            <p>published: {{ post.published_date }}</p>
+            <h1>{{ post.title }}</h1>
+            <p>{{ post.text|linebreaksbr }}</p>
+        </div>
     </div>
 {% endfor %}
 {% endblock %}

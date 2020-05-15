@@ -12,7 +12,7 @@ class TaskForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        fields = ('name', 'params', 'description', 'language', 'value')
+        fields = ('name', 'params', 'description', 'language', 'value', 'group_id')
 
 
 class TestForm(forms.ModelForm):
@@ -26,7 +26,7 @@ class JobForm(forms.ModelForm):
 
     class Meta:
         model = Job
-        fields = ('user_id', 'task_id', 'comment', 'status', 'assessment')
+        fields = ('user_id', 'task_id', 'comment', 'status', 'assessment', 'code')
 
 
 class UserForm(forms.ModelForm):

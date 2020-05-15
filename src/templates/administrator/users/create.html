@@ -18,6 +18,8 @@
 
 <script type="text/javascript">
     let frm = $('#create-user');
+    let select = document.querySelectorAll('#create-user select')[0];
+
     frm.submit(function () {
         $.ajax({
             type: "POST",
@@ -41,8 +43,10 @@
             url: '/administrator/groups/create/',
             data: group.serialize(),
             success: function (data) {
-                console.log(data);
-                // $("#info").html(data);
+                let opt = document.createElement('option');
+                opt.value = data.id;
+                opt.innerHTML = data.name;
+                select.appendChild(opt);
             },
             error: function(data) {
                 $("#info").html("Something went wrong!");

@@ -11,11 +11,17 @@ class Task(models.Model):
     group_id = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True)
     value = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 class Test(models.Model):
     task_id = models.ForeignKey(Task, on_delete=models.SET_NULL, null=True)
     params = models.CharField(max_length=255)
     result = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.id
 
 
 class Job(models.Model):

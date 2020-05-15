@@ -13,7 +13,7 @@ def users_logout(request):
 def users_login(request):
 
     user = authenticate(username=request.POST.get('email'), password=request.POST.get('password'))
-    print('lllll', user)
+
     if user is not None:
         if user.is_active:
             login(request, user)

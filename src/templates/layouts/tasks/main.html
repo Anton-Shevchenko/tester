@@ -44,6 +44,10 @@
         height: 50px;
     }
 
+    #task-desription {
+        min-height: 50vh;
+    }
+
     .nav a {
         padding: 10px;
         color: white;
@@ -116,14 +120,28 @@
                     </a>
                 </div>
             </div>
-            <div>
+            <div id="task-desription">
                 {{ task.description }}
+            </div>
+            <div>
+                <p>Comment</p>
+                {% if job.comment %}
+{{ job.comment }}
+                {% endif %}
+            </div>
+            <div>
+                <p>Assessment</p>
+                {% if job.assessment %}
+{{ job.assessment }}
+                {% endif %}
             </div>
         </div>
         <div class="col-8">
             <div class="row">
                 <div class="col-12">
-                    <textarea id="text-code">
+                    <textarea id="text-code">{% if job.code %}
+{{ job.code }}
+                    {% endif %}
                     </textarea>
                 </div>
             </div>
@@ -150,10 +168,17 @@
 
     let textCode = document.getElementById('text-code');
     let baseCode = 'def {{ task.name }}({{ task.params }}):' + '\n' +
-    '  # code\n' +
-    '  return result';
+        '  # code\n' +
+        '  return result';
 
-    textCode.innerHTML = baseCode;
+    if ('{{ job.id }}') {
+
+    } else {
+        if ('{{ task.name }}') {
+            textCode.innerHTML = baseCode;
+        }
+    }
+
     var CodeMirror = CodeMirror.fromTextArea(textCode, {
         lineNumbers: true,
         mode: "python",
@@ -173,7 +198,11 @@
             url: '/tasks/run_' + yap + '/',
             data: {code: CodeMirror.getValue(), name: '{{ task.name }}', task_id: '{{ task.id }}'},
             success: function (data) {
-                responseArea.value += '\n' + data.ok;
+                if ('error' in data) {
+                    responseArea.value += '\n' + data.error;
+                } else {
+                    responseArea.value += '\n' + 'Success';
+                }
             }
         });
     }

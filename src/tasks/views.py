@@ -15,14 +15,32 @@ def representsInt(s):
 
 
 def index(request):
-    tasks = Task.objects.all()
+    user = User.objects.get(id=request.user.id)
+
+    if user.group_id is not None:
+        group_id = user.group_id.id
+        tasks = Task.objects.filter(group_id=group_id)
+    else:
+        tasks = Task.objects.all()
     return render(request, 'tasks/index.html', {'tasks': tasks})
 
 
 def task(request, pk):
-    tasks = Task.objects.all()
+    user = User.objects.get(id=request.user.id)
+
+    if user.group_id is not None:
+        group_id = user.group_id.id
+        tasks = Task.objects.filter(group_id=group_id)
+    else:
+        tasks = Task.objects.all()
+
+    job = Job.objects.filter(user_id=request.user.id, task_id=pk).exists()
+
+    if job:
+        job = Job.objects.get(user_id=request.user.id, task_id=pk)
+
     task = Task.objects.get(pk=pk)
-    return render(request, 'tasks/index.html', {'task': task, 'tasks': tasks})
+    return render(request, 'tasks/index.html', {'task': task, 'tasks': tasks, "job": job})
 
 
 def run_cpp(request):
@@ -59,8 +77,8 @@ def run_python(request):
     job = Job()
     job.code = code
     job.user_id = User.objects.get(id=request.user.id)
-    job.status = 1
-    job.save()
+    job.task_id = Task.objects.get(id=request.POST.get('task_id'))
+
     try:
         import codepy
         importlib.reload(codepy)
@@ -83,9 +101,12 @@ def run_python(request):
             elif len(params) == 5:
                 response = getattr(codepy, name)(type_params[0], type_params[1], type_params[2],
                                                  type_params[3], type_params[4])
-            print('LLLLLLLL', response)
             if str(response) != str(test.result):
-                return JsonResponse({"ok": str(test.params) + ' - has error!'})
+                job.status = 2
+                job.save()
+                return JsonResponse({"error": str(test.params) + ' - has error!'})
+            job.status = 5
+            job.save()
         return JsonResponse({"ok": response})
     except Exception as e:
         return JsonResponse({"ok": str(e)})

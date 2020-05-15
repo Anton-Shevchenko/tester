@@ -2,13 +2,13 @@
 
 {% block form %}
 <h1>New Task</h1>
-<form id="create-user" method="POST" class="post-form">{% csrf_token %}
+<form id="create-task" method="POST" class="post-form">{% csrf_token %}
     {{ form_task.as_p }}
     <button type="submit" class="save btn btn-default">Save</button>
 </form>
 
 <h1>Tests</h1>
-<form id="create-group" method="POST" class="post-form">{% csrf_token %}
+<form id="create-test" method="POST" class="post-form">{% csrf_token %}
     {{ form_test.as_p }}
     <button type="submit" class="save btn btn-default">Save</button>
 </form>
@@ -17,15 +17,20 @@
 </div>
 
 <script type="text/javascript">
-    let frm = $('#create-user');
+    let frm = $('#create-task');
+    let select_task = document.querySelectorAll('#create-task select')[0];
+    let select_test = document.querySelectorAll('#create-test select')[0];
+
     frm.submit(function () {
         $.ajax({
             type: "POST",
             url: frm.attr('action'),
             data: frm.serialize(),
             success: function (data) {
-                console.log(data);
-                // $("#info").html(data);
+               let opt = document.createElement('option');
+                opt.value = data.id;
+                opt.innerHTML = data.name;
+                select_test.appendChild(opt);
             },
             error: function(data) {
                 $("#info").html("Something went wrong!");
@@ -34,15 +39,18 @@
         return false;
     });
 
-    let group = $('#create-group');
+    let group = $('#create-test');
     group.submit(function () {
         $.ajax({
             type: "POST",
             url: '/administrator/tests/create/',
             data: group.serialize(),
             success: function (data) {
-                console.log(data);
-                // $("#info").html(data);
+                console.log('KKKKKKKKK')
+                let opt = document.createElement('option');
+                opt.value = data.id;
+                opt.innerHTML = data.name;
+                select_task.appendChild(opt);
             },
             error: function(data) {
                 $("#info").html("Something went wrong!");

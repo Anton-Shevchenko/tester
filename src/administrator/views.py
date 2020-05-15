@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from tasks.models import Task, Job
+from tasks.models import Task, Job, Test
 from django.http import JsonResponse, HttpResponseNotFound
 from .forms import TaskForm, UserForm, GroupForm, TestForm, JobForm, PostForm
 from myapp.forms import CustomUserCreationForm
@@ -25,8 +25,9 @@ def users_create(request):
         user = User.objects.create_user(
             request.POST.get('email'),
             first_name=request.POST.get('first_name'),
-            password=request.POST.get('password'),
+            password=request.POST.get('password1'),
             group_id=Group.objects.get(pk=request.POST.get('group_id')))
+
         if user:
             return JsonResponse({"data": "ok"})
         return JsonResponse({"data": "error"})
@@ -48,7 +49,7 @@ def ajax_groups(request):
     if form.is_valid():
         group = form.save()
 
-    return JsonResponse({"data": group})
+    return JsonResponse({"id": group.id, "name": group.name})
 
 
 def tasks(request):
@@ -71,14 +72,42 @@ def jobs_view(request, pk):
 
 def jobs_update(request, pk):
     job = get_object_or_404(Job, pk=pk)
+
     if request.method == "POST":
-        form = JobForm(request.POST, instance=job)
-        if form.is_valid():
-            job.save()
-            return redirect('control_jobs_update', pk=job.pk)
+        job.comment = request.POST.get('comment')
+        job.assessment = request.POST.get('assessment')
+        job.save()
+        return redirect('control_jobs_update', pk=job.pk)
     else:
         form = JobForm(instance=job)
     return render(request, 'administrator/jobs/update.html', {'form': form})
+
+
+def tasks_update(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    if request.method == "POST":
+        form_task = JobForm(request.POST)
+        if form_task.is_valid():
+            task = form_task.save(commit=False)
+            task.save()
+            return JsonResponse({"data": "ok"})
+    else:
+        form_task = TaskForm(instance=task)
+
+    return render(request, 'administrator/tasks/update.html', {'form_task': form_task})
+
+
+def tests_view(request, pk):
+    tests = Test.objects.filter(task_id=pk)
+
+    return render(request, 'administrator/tests/index.html', {'tests': tests})
+
+
+def ajax_tests(request, pk):
+    pk=1
+    data_tests = Test.objects.filter(task_id=pk).values()
+
+    return JsonResponse({"data": list(data_tests)})
 
 
 def tasks_create(request):
@@ -86,10 +115,10 @@ def tasks_create(request):
     if request.method == "POST":
         form = TaskForm(request.POST)
         if form.is_valid():
-            post = form.save(commit=False)
-
-            post.save()
-            return JsonResponse({"data": "ok"})
+            task = form.save(commit=False)
+            task.group_id = Group.objects.get(pk=request.POST.get('group_id'))
+            task.save()
+            return JsonResponse({"id": task.id, "name": task.name})
     else:
         form_task = TaskForm()
         form_test = TestForm()
@@ -104,8 +133,7 @@ def tests_create(request):
         if form.is_valid():
             test = form.save(commit=False)
             test.save()
-            serialized_test = serializers.serialize('json', [ test, ])
-            return JsonResponse({"data": serialized_test})
+            return JsonResponse({"data": "ok"})
 
     return HttpResponseNotFound('Test not found')
 

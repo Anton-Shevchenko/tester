@@ -5,7 +5,7 @@
 <table id="example" class="display" style="width:100%">
     <thead>
         <tr>
-            <th>Id</th>
+            <th>Result</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -15,17 +15,16 @@
    $(document).ready( function () {
     $('#example').DataTable({
         "ajax": {
-            "url": '/administrator/ajax/tasks/',
+            "url": '/administrator/ajax/tests/1',
             "type": "GET",
             "headers": {"X-CSRFToken": '{{csrf_token}}'},
         },
         "columns": [
-            { "data": "name" },
+            { "data": "result" },
             /* EDIT */ {
                 mRender: function (data, type, row) {
                     return '<a class="table-btn btn-action"  href="/administrator/tasks/'
-                        + row.id +'/update/">Task</a>' +
-                        '<a class="table-btn btn-edit" href="/administrator/tests/' + row.id +'/">Tests</a>' +
+                        + row.id +'/update/">Test</a>' +
                         '<a class="table-btn btn-edit" href="/administrator/tasks/' + row.id +'/delete/">Delete</a>'
                 }
             }
